@@ -8,6 +8,7 @@
 [![Tailwind CSS](https://img.shields.io/badge/TailwindCSS-3.4-38bdf8?style=flat&logo=tailwindcss)](https://tailwindcss.com/)
 [![Web Crypto API](https://img.shields.io/badge/Security-PBKDF2_%7C_AES--256--GCM-green?style=flat&logo=shield)](https://developer.mozilla.org/en-US/docs/Web/API/Web_Crypto_API)
 [![Vitest](https://img.shields.io/badge/Tests-16%2F16_Passed-success?style=flat&logo=vitest)](https://vitest.dev/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 ---
 
@@ -212,4 +213,4 @@ Para publicar a aplicação na infraestrutura global da Cloudflare:
 ---
 
 ## 📄 Licença
-Projeto acadêmico e comercial desenvolvido para fins educacionais e de demonstração de práticas avançadas de Segurança da Informação, LGPD e E-commerce Moderno.
+Este projeto está licenciado sob a licença **MIT** — consulte o arquivo [LICENSE](LICENSE) para mais detalhes.
