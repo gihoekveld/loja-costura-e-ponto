@@ -1,0 +1,40 @@
+{
+  "name": "loja-costura-e-ponto",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "pages:build": "npx @cloudflare/next-on-pages",
+    "preview": "npm run pages:build && wrangler pages dev .vercel/output/static",
+    "deploy": "npm run pages:build && wrangler pages deploy .vercel/output/static",
+    "d1:migrate:local": "wrangler d1 execute sec-store-db --local --file=./database/migrations/0001_initial_schema.sql && wrangler d1 execute sec-store-db --local --file=./database/migrations/0002_seed_data.sql",
+    "d1:migrate:remote": "wrangler d1 execute sec-store-db --remote --file=./database/migrations/0001_initial_schema.sql && wrangler d1 execute sec-store-db --remote --file=./database/migrations/0002_seed_data.sql",
+    "test": "vitest run",
+    "seed:users": "node scripts/seed_security_users.mjs"
+  },
+  "dependencies": {
+    "clsx": "^2.1.1",
+    "lucide-react": "^0.453.0",
+    "next": "^14.2.35",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "tailwind-merge": "^2.5.4",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@cloudflare/next-on-pages": "^1.13.5",
+    "@cloudflare/workers-types": "^4.20241022.0",
+    "@types/node": "^20.17.0",
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "autoprefixer": "^10.4.20",
+    "postcss": "^8.4.47",
+    "tailwindcss": "^3.4.14",
+    "typescript": "^5.6.3",
+    "vitest": "^2.1.3",
+    "wrangler": "^3.83.0"
+  }
+}
