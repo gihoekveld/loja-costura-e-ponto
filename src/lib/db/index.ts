@@ -85,7 +85,8 @@ class LocalD1Database implements D1DatabaseBinding {
 
   private initDatabase() {
     try {
-      const nodeRequire = (globalThis as any).__non_webpack_require__ || eval('require');
+      if (typeof (globalThis as any).EdgeRuntime === 'string') return;
+      const nodeRequire = typeof (globalThis as any).__non_webpack_require__ !== 'undefined' ? (globalThis as any).__non_webpack_require__ : Function('return require')();
       const { DatabaseSync } = nodeRequire('node:sqlite');
       const fsMod = nodeRequire('fs');
       const pathMod = nodeRequire('path');
@@ -148,10 +149,6 @@ class LocalD1Database implements D1DatabaseBinding {
 }
 
 const globalForD1 = globalThis as unknown as { __localD1Instance?: LocalD1Database };
-if (!globalForD1.__localD1Instance || !(globalForD1.__localD1Instance instanceof LocalD1Database)) {
-  globalForD1.__localD1Instance = new LocalD1Database();
-}
-const localD1Instance = globalForD1.__localD1Instance;
 
 export function getDb(): D1DatabaseBinding {
   try {
@@ -169,5 +166,8 @@ export function getDb(): D1DatabaseBinding {
 
   // 2. Em ambiente de desenvolvimento local (next dev) e testes, conecta-se diretamente
   // ao arquivo SQLite do Cloudflare D1 em .wrangler/state/v3/d1
-  return localD1Instance;
+  if (!globalForD1.__localD1Instance) {
+    globalForD1.__localD1Instance = new LocalD1Database();
+  }
+  return globalForD1.__localD1Instance;
 }
