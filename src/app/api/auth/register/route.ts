@@ -1,3 +1,5 @@
+export const runtime = 'edge';
+
 import { NextRequest, NextResponse } from 'next/server';
 import { registerSchema } from '@/lib/validation/schemas';
 import { findUserByEmail, findUserByCpfHash, createUser } from '@/lib/db/users';

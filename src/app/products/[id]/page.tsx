@@ -1,3 +1,5 @@
+export const runtime = 'edge';
+
 import { getProductById } from '@/lib/db/products';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';

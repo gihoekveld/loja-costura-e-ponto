@@ -1,3 +1,5 @@
+export const runtime = 'edge';
+
 import { getSessionUser } from '@/lib/auth/session';
 import { getOrderByIdForUser } from '@/lib/db/orders';
 import { notFound, redirect } from 'next/navigation';

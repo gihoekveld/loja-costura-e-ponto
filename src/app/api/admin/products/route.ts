@@ -1,3 +1,5 @@
+export const runtime = 'edge';
+
 import { NextRequest, NextResponse } from 'next/server';
 import { getSessionUser } from '@/lib/auth/session';
 import { getAllProducts, createProduct, updateProduct, deleteProduct, getProductById } from '@/lib/db/products';

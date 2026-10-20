@@ -14,7 +14,7 @@ function bufferToHex(buffer: ArrayBuffer): string {
 function hexToBuffer(hex: string): Uint8Array {
   const bytes = new Uint8Array(hex.length / 2);
   for (let i = 0; i < hex.length; i += 2) {
-    bytes[i / 2] = parseInt(hex.substring(i, i + 2), 16);
+    bytes[i / 2] = Number.parseInt(hex.substring(i, i + 2), 16);
   }
   return bytes;
 }
@@ -87,7 +87,7 @@ export async function verifyPassword(password: string, storedHash: string): Prom
       return false;
     }
 
-    const iterations = parseInt(parts[1], 10);
+    const iterations = Number.parseInt(parts[1], 10);
     const saltHex = parts[2];
     const originalHashHex = parts[3];
 
@@ -125,12 +125,27 @@ export async function verifyPassword(password: string, storedHash: string): Prom
 // Gerenciamento Criptográfico de Dados Sensíveis: CPF (LGPD / Segurança)
 // =========================================================================
 
-const CPF_HASH_PEPPER = 'costura_ponto_cpf_pepper_2026';
-const DEFAULT_ENCRYPTION_SECRET = 'costura-ponto-secure-aes-master-key-2026!';
 
 /**
  * Remove formatação do CPF, mantendo apenas dígitos numéricos.
  */
+
+function getCpfHashPepper(): string {
+  const pepper = typeof process !== "undefined" ? process.env?.CPF_HASH_PEPPER : undefined;
+  if (!pepper) {
+    throw new Error("A variável de ambiente CPF_HASH_PEPPER não está configurada no sistema.");
+  }
+  return pepper;
+}
+
+function getDataEncryptionKey(): string {
+  const key = typeof process !== "undefined" ? process.env?.DATA_ENCRYPTION_KEY : undefined;
+  if (!key) {
+    throw new Error("A variável de ambiente DATA_ENCRYPTION_KEY não está configurada no sistema.");
+  }
+  return key;
+}
+
 export function normalizeCpf(cpf: string): string {
   return cpf.replace(/\D/g, '');
 }
@@ -163,19 +178,19 @@ export function isValidCpf(cpf: string): boolean {
 
   let sum = 0;
   for (let i = 0; i < 9; i++) {
-    sum += parseInt(clean.charAt(i), 10) * (10 - i);
+    sum += Number.parseInt(clean.charAt(i), 10) * (10 - i);
   }
   let rev = 11 - (sum % 11);
   if (rev === 10 || rev === 11) rev = 0;
-  if (rev !== parseInt(clean.charAt(9), 10)) return false;
+  if (rev !== Number.parseInt(clean.charAt(9), 10)) return false;
 
   sum = 0;
   for (let i = 0; i < 10; i++) {
-    sum += parseInt(clean.charAt(i), 10) * (11 - i);
+    sum += Number.parseInt(clean.charAt(i), 10) * (11 - i);
   }
   rev = 11 - (sum % 11);
   if (rev === 10 || rev === 11) rev = 0;
-  if (rev !== parseInt(clean.charAt(10), 10)) return false;
+  if (rev !== Number.parseInt(clean.charAt(10), 10)) return false;
 
   return true;
 }
@@ -190,7 +205,8 @@ export function isValidCpf(cpf: string): boolean {
 export async function hashCpf(cpf: string): Promise<string> {
   const clean = normalizeCpf(cpf);
   const encoder = new TextEncoder();
-  const data = encoder.encode(`${CPF_HASH_PEPPER}:${clean}`);
+  const pepper = getCpfHashPepper();
+  const data = encoder.encode(`${pepper}:${clean}`);
   const hashBuffer = await crypto.subtle.digest('SHA-256', data);
   return bufferToHex(hashBuffer);
 }
@@ -199,7 +215,7 @@ export async function hashCpf(cpf: string): Promise<string> {
  * Deriva uma chave AES-GCM de 256 bits a partir do segredo mestre da aplicação.
  */
 async function getAesKey(): Promise<CryptoKey> {
-  const secret = (typeof process !== 'undefined' && process.env?.DATA_ENCRYPTION_KEY) || DEFAULT_ENCRYPTION_SECRET;
+  const secret = getDataEncryptionKey();
   const encoder = new TextEncoder();
   const rawKeyMaterial = await crypto.subtle.digest('SHA-256', encoder.encode(secret));
 
