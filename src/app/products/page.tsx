@@ -1,4 +1,4 @@
-export const runtime = 'edge';
+
 
 import { getAllProducts } from '@/lib/db/products';
 import { CatalogView } from '@/components/CatalogView';

@@ -1,0 +1,23 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: loja_costura_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${PGUSER:-costura_user}
+      POSTGRES_PASSWORD: ${PGPASSWORD:-costura_secret_2026}
+      POSTGRES_DB: ${PGDATABASE:-costura_ponto_db}
+    ports:
+      - "${PGPORT:-5432}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./database/init:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${PGUSER:-costura_user} -d ${PGDATABASE:-costura_ponto_db}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres_data:
+    driver: local

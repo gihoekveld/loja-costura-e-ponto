@@ -136,9 +136,61 @@ loja-costura-e-ponto/
 
 ---
 
+---
+
+## 🗄️ Banco de Dados & PostgreSQL (Docker Compose)
+
+O projeto utiliza **PostgreSQL 16** como banco de dados relacional oficial, gerenciado via Docker Compose e acessado no Next.js pela biblioteca **`pg`** (Node-Postgres) através de Pool de conexões otimizado e *Prepared Statements* com proteção estrita contra SQL Injection.
+
+### Inicialização Rápida com Docker
+
+Para subir o banco de dados e aplicar o schema e seed automaticamente:
+
+```bash
+# 1. Iniciar o container do PostgreSQL
+npm run db:up
+
+# Ou diretamente via docker compose:
+docker compose up -d
+```
+
+O container carrega automaticamente os scripts em `database/init/`:
+- `01_schema.sql`: Estrutura das tabelas (`users`, `sessions`, `products`, `orders`, `order_items`, `rate_limits`).
+- `02_seed.sql`: Carga inicial de produtos, cliente e administrador.
+
+---
+
+## 🔌 Conexão via pgAdmin / DBeaver / Workbench
+
+Para realizar os testes de segurança e auditoria exigidos na disciplina (como acesso direto via **pgAdmin**, **DBeaver** ou cliente SQL):
+
+| Parâmetro | Valor Padrão |
+| :--- | :--- |
+| **Host / Servidor** | `localhost` ou `127.0.0.1` |
+| **Porta** | `5432` |
+| **Banco de Dados (Maintenance DB)** | `costura_ponto_db` |
+| **Usuário (Username)** | `costura_user` |
+| **Senha (Password)** | `costura_secret_2026` |
+| **Connection URL** | `postgresql://costura_user:costura_secret_2026@localhost:5432/costura_ponto_db` |
+
+### Passos no pgAdmin Desktop:
+1. Abra o **pgAdmin** no seu computador.
+2. Clique com botão direito em **Servers** > **Register** > **Server...**
+3. Na aba **General**, defina o nome: `Loja Costura e Ponto`.
+4. Na aba **Connection**:
+   - Host name/address: `localhost`
+   - Port: `5432`
+   - Maintenance database: `costura_ponto_db`
+   - Username: `costura_user`
+   - Password: `costura_secret_2026`
+5. Clique em **Save**. Você terá acesso direto às tabelas, dados criptografados (LGPD) e hashes PBKDF2.
+
+---
+
 ## 🚀 Como Executar o Projeto
 
 ### Pré-requisitos
+- **Docker** e **Docker Compose**
 - **Node.js** v18+ (Node.js 20+ ou 24 recomendado)
 - **npm** v9+
 
@@ -147,13 +199,12 @@ loja-costura-e-ponto/
 npm install
 ```
 
-### 2. Inicializar o Banco de Dados Local (Cloudflare D1)
-As migrações são aplicadas automaticamente na primeira inicialização, ou você pode executá-las manualmente:
+### 2. Subir o Banco de Dados PostgreSQL
 ```bash
-npm run d1:migrate:local
+npm run db:up
 ```
 
-### 3. Iniciar o Servidor de Desenvolvimento
+### 3. Iniciar a Aplicação Next.js
 ```bash
 npm run dev
 ```
@@ -165,12 +216,15 @@ Acesse a aplicação no navegador em: **[http://localhost:3000](http://localhost
 
 | Comando | Descrição |
 | :--- | :--- |
-| `npm run dev` | Inicia o servidor Next.js em ambiente de desenvolvimento |
-| `npm run build` | Compila o projeto otimizado para produção |
-| `npm start` | Inicia o servidor com a build de produção local |
-| `npm test` | Executa a suíte de testes com Vitest |
-| `npm run d1:migrate:local` | Aplica o schema e seeds base no banco D1 local |
-| `npm run d1:migrate:remote`| Aplica as migrações no banco D1 de produção na Cloudflare |
+| `npm run dev` | Inicia o servidor Next.js em modo de desenvolvimento |
+| `npm run build` | Compila o projeto para produção |
+| `npm run start` | Inicia o servidor de produção compilado |
+| `npm run db:up` | Sobe o container do PostgreSQL no Docker em segundo plano |
+| `npm run db:down` | Encerra o container do PostgreSQL |
+| `npm run db:logs` | Visualiza os logs em tempo real do banco de dados |
+| `npm run db:reset` | Remove o volume de dados e recria o banco do zero com o seed |
+| `npm test` | Executa a bateria de testes automatizados com Vitest |
+| `npm run seed:users` | Gera e insere lotes de usuários de teste para auditoria |
 | `npm run pages:build` | Prepara os assets para o Cloudflare Pages (`next-on-pages`) |
 | `npm run deploy` | Realiza o deploy da aplicação no Cloudflare Pages |
 

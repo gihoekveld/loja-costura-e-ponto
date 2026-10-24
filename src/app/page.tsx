@@ -1,4 +1,4 @@
-export const runtime = 'edge';
+
 
 import Link from 'next/link';
 import { getAllProducts } from '@/lib/db/products';
