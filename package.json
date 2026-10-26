@@ -17,7 +17,7 @@
     "db:down": "docker compose down",
     "db:logs": "docker compose logs -f postgres",
     "db:reset": "docker compose down -v && docker compose up -d",
-    "seed:users": "node scripts/seed_security_users.mjs"
+    "db:seed": "node scripts/seed_users_daily.mjs"
   },
   "dependencies": {
     "clsx": "^2.1.1",
