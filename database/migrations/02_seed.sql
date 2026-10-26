@@ -14,12 +14,12 @@ INSERT INTO users (
     phone, cep, street, number, complement, neighborhood, city, state, role
 ) VALUES 
 (
-    'usr_mariana_001',
+    '01M5X8JGNFH9M96N9DDBB4MCAN',
     'Mariana Silva - Ateliê Ponto de Ouro',
     'mariana@ateliecostura.com.br',
-    'pbkdf2:100000:cd57896fecfcfb0948bd2a63cdeb4daa:9a6122c2f20c9a40b57c046cdaa615ccdcef34767c6d7cd1f0a0cfb76bc4a952',
-    '3013bf10591bf0fcf16b23ec55ee5df039c13d96a8a56d4539b8bb32faba72a1',
-    'aes-gcm:0f0dea19dc5747784c127da8:26f62dabb6bedfc71d0565f6893ecd2ea549bb7e8f6739314b86f6',
+    'pbkdf2:100000:008c184be46d703dfcced8350f5e61f5:c0c311111b686a2f832056a1a2b9a27e11df7dc1cd85e3bef2393eb948220546',
+    'fae0908dc91acd365edb335e925a1c2dde2285263d1eed8a996401f752ae8b18',
+    'aes-gcm:6df660fb74151c38055bc0f6:6569b3be395f989b52388baf599f73a658529b63ead0ec75a2b751',
     '(11) 98765-4321',
     '04012-000',
     'Rua das Flores',
@@ -31,12 +31,12 @@ INSERT INTO users (
     'customer'
 ),
 (
-    'usr_admin_001',
+    '01M5X8JGNJ2HSDPP3FQ0XSQYTF',
     'Administrador Costura & Ponto',
     'admin@costuraeponto.com.br',
-    'pbkdf2:100000:fa862713a2584a5f87242d2bfb446e49:5024f5f1871096625818344471b10cb483c1cba8ca346c03c3f092c21f925755',
-    'f5d08cd7dbe707d20bc40c2221aff89d7bd6ef5642582a7422844904ec446eb1',
-    'aes-gcm:a497c30f4718390fca81f8ed:f743324f027ba9d4d543cb79e8364bd9731ada3ae22d9a11a59e74',
+    'pbkdf2:100000:6d3f3101595cb19545c9cf0f5394ab97:1cbd0e07ecd53a441e5cc11666412f6bd34e9f28cd6a10746d755c7a4afb9bc2',
+    '36ee3b5f68943a05678dea512d8b13114d65240072b10a07c55a6b19341811be',
+    'aes-gcm:35fc2946922863554322f38a:43fe281a73847ac3dd71b93e82661c6d52fcee014aaa37fc414a41',
     '(11) 3222-1000',
     '03104-002',
     'Rua da Mooca',
@@ -72,7 +72,7 @@ INSERT INTO products (id, name, description, price, stock, category, image_url) 
 
 -- Inserir Pedido Realista
 INSERT INTO orders (id, user_id, total, status, shipping_address, payment_method) VALUES 
-('ord_mariana_01', 'usr_mariana_001', 123.80, 'paid', 'Rua das Flores, 250 - Apto 42 - Vila Mariana, São Paulo/SP - CEP 04012-000 (Destinatário: Mariana Silva, CPF: 234.567.890-12)', 'pix');
+('ord_mariana_01', '01M5X8JGNFH9M96N9DDBB4MCAN', 123.80, 'paid', 'Rua das Flores, 250 - Apto 42 - Vila Mariana, São Paulo/SP - CEP 04012-000 (Destinatário: Mariana Silva, CPF: 234.567.890-12)', 'pix');
 
 INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES 
 ('item_01', 'ord_mariana_01', 'prod_01', 1, 68.90),

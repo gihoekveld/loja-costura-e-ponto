@@ -24,7 +24,7 @@ describe('Segurança do Checkout e Validação de Estoque/Preço no Servidor', (
   });
 
   it('deve registrar o pedido com o valor total recalculado', async () => {
-    const userId = 'usr_mariana_001';
+    const userId = '01M5X8JGNFH9M96N9DDBB4MCAN';
     const items = [
       { productId: 'prod_01', quantity: 1, unitPrice: 68.90 },
       { productId: 'prod_04', quantity: 2, unitPrice: 54.90 },
