@@ -53,4 +53,3 @@ Thumbs.db
 
 # Security testing seeds & generator scripts (prevent leaking generated emails/logic)
 /database/seeds/
-/scripts/seed_security_users.mjs
