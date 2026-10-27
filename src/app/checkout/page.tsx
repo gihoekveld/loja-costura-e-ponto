@@ -13,7 +13,8 @@ import {
   Truck, 
   MapPin, 
   ShieldCheck,
-  Scissors
+  Scissors,
+  Loader2
 } from 'lucide-react';
 
 export default function CheckoutPage() {
@@ -459,10 +460,19 @@ export default function CheckoutPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-3.5 bg-[#b85042] hover:bg-[#a33f32] text-white font-bold text-sm rounded-xl shadow-md shadow-[#b85042]/20 flex items-center justify-center gap-2 transition-all disabled:opacity-50"
+              className="w-full py-3.5 bg-[#b85042] hover:bg-[#a33f32] text-white font-bold text-sm rounded-xl shadow-md shadow-[#b85042]/20 flex items-center justify-center gap-2 transition-all disabled:opacity-75 disabled:cursor-not-allowed"
             >
-              {loading ? 'Processando Pedido...' : 'Concluir Pedido'}
-              <ArrowRight className="w-4 h-4" />
+              {loading ? (
+                <>
+                  <Loader2 className="w-4 h-4 animate-spin shrink-0" />
+                  <span>Processando Compra...</span>
+                </>
+              ) : (
+                <>
+                  <span>Concluir Pedido</span>
+                  <ArrowRight className="w-4 h-4" />
+                </>
+              )}
             </button>
 
             <div className="flex items-center justify-center gap-2 text-[10px] text-stone-500 pt-1">
@@ -472,6 +482,28 @@ export default function CheckoutPage() {
           </div>
         </div>
       </form>
+
+      {/* Overlay de Loading durante o Processamento da Compra */}
+      {loading && (
+        <div className="fixed inset-0 bg-stone-900/60 backdrop-blur-xs z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl p-6 sm:p-8 max-w-sm w-full text-center space-y-4 shadow-2xl border border-stone-200 animate-in fade-in zoom-in-95 duration-200">
+            <div className="relative w-16 h-16 mx-auto flex items-center justify-center">
+              <div className="absolute inset-0 rounded-full border-4 border-stone-100 border-t-[#b85042] animate-spin" />
+              <Scissors className="w-6 h-6 text-[#b85042] transform -rotate-45" />
+            </div>
+            <div className="space-y-1.5">
+              <h3 className="text-base font-bold text-stone-900">Processando sua Compra</h3>
+              <p className="text-xs text-stone-500 leading-relaxed">
+                Validando pagamento e registrando seu pedido no banco de dados com segurança...
+              </p>
+            </div>
+            <div className="pt-3 border-t border-stone-100 flex items-center justify-center gap-2 text-[11px] text-[#437a5b] font-medium">
+              <ShieldCheck className="w-4 h-4 shrink-0" />
+              <span>Ambiente Seguro • Proteção LGPD</span>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
