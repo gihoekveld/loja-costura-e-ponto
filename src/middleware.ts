@@ -11,9 +11,10 @@ export function middleware(request: NextRequest) {
   // 1. Aplicar Headers de Segurança HTTP
   applySecurityHeaders(response.headers);
 
-  // 2. Proteção contra CSRF para requisições de mutação
+  // 2. Proteção contra CSRF para requisições de mutação (exceto automações e cron em /api/cron)
   if (['POST', 'PUT', 'DELETE', 'PATCH'].includes(request.method)) {
-    if (!verifyCsrf(request)) {
+    const isCron = request.nextUrl.pathname.startsWith('/api/cron');
+    if (!isCron && !verifyCsrf(request)) {
       return NextResponse.json(
         { error: 'Requisição rejeitada por validação de segurança (CSRF invalid origin).' },
         { status: 403, headers: response.headers }

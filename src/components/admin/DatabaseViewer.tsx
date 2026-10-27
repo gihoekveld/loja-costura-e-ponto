@@ -19,6 +19,7 @@ import {
   KeyRound,
   Eye,
   EyeOff,
+  UserPlus,
 } from 'lucide-react';
 
 interface DatabaseData {
@@ -47,6 +48,17 @@ interface DatabaseViewerProps {
   isInsideAdmin?: boolean;
 }
 
+function formatDateTime(val: any): string {
+  if (!val) return '-';
+  const d = new Date(typeof val === 'string' && /^\d+$/.test(val) ? Number(val) : val);
+  if (isNaN(d.getTime())) return String(val);
+  return `${d.toLocaleDateString('pt-BR')} às ${d.toLocaleTimeString('pt-BR', {
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+  })}`;
+}
+
 export function DatabaseViewer({ initialPassword = '', isInsideAdmin = false }: DatabaseViewerProps) {
   const [password, setPassword] = useState(initialPassword);
   const [showPassword, setShowPassword] = useState(false);
@@ -57,6 +69,7 @@ export function DatabaseViewer({ initialPassword = '', isInsideAdmin = false }: 
   const [searchTerm, setSearchTerm] = useState('');
   const [copied, setCopied] = useState(false);
   const [needsAuth, setNeedsAuth] = useState(false);
+  const [generatingUser, setGeneratingUser] = useState(false);
 
   const fetchDatabase = async (pwd?: string) => {
     setLoading(true);
@@ -120,6 +133,27 @@ export function DatabaseViewer({ initialPassword = '', isInsideAdmin = false }: 
     navigator.clipboard.writeText(JSON.stringify(data, null, 2));
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
+  };
+
+  const handleGenerateUser = async () => {
+    setGeneratingUser(true);
+    try {
+      const key = password || 'senha123';
+      const res = await fetch(`/api/cron/generate-user?key=${encodeURIComponent(key)}`, {
+        method: 'POST',
+      });
+      const json = await res.json();
+      if (res.ok && json.success) {
+        await fetchDatabase();
+        setActiveTab('users');
+      } else {
+        alert(json.error || 'Erro ao gerar usuário');
+      }
+    } catch {
+      alert('Erro de conexão ao acionar gerador de usuário');
+    } finally {
+      setGeneratingUser(false);
+    }
   };
 
   const currentTableData = useMemo(() => {
@@ -230,7 +264,17 @@ export function DatabaseViewer({ initialPassword = '', isInsideAdmin = false }: 
             </p>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 flex-wrap">
+            <button
+              onClick={handleGenerateUser}
+              disabled={generatingUser || loading}
+              className="inline-flex items-center gap-1.5 px-3 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-semibold transition shadow-sm disabled:opacity-50"
+              title="Dispara a rota /api/cron/generate-user para criar 1 novo usuário no PostgreSQL"
+            >
+              <UserPlus className={`w-3.5 h-3.5 ${generatingUser ? 'animate-bounce' : ''}`} />
+              <span>{generatingUser ? 'Criando Usuário...' : '+ Gerar 1 Usuário (Simular Cron)'}</span>
+            </button>
+
             <button
               onClick={() => fetchDatabase()}
               disabled={loading}
@@ -436,15 +480,26 @@ export function DatabaseViewer({ initialPassword = '', isInsideAdmin = false }: 
         )}
       </div>
 
-      {/* Destaque LGPD se estiver na aba de Usuários */}
+      {/* Destaque LGPD e Cron se estiver na aba de Usuários */}
       {activeTab === 'users' && (
-        <div className="bg-sky-50 border border-sky-200 p-4 rounded-xl text-xs text-sky-900 flex items-start gap-3">
-          <ShieldCheck className="w-5 h-5 text-sky-600 shrink-0 mt-0.5" />
-          <div>
-            <strong className="font-semibold block text-sky-950">
-              Conformidade com a LGPD no Banco de Dados:
-            </strong>
-            Observe que a tabela <code className="bg-sky-100 px-1 py-0.5 rounded font-mono text-sky-900">users</code> não armazena CPF em texto claro. O campo <code className="bg-sky-100 px-1 py-0.5 rounded font-mono text-sky-900">cpf_hash</code> armazena o SHA-256 determinístico com pepper para pesquisas exatas, e o campo <code className="bg-sky-100 px-1 py-0.5 rounded font-mono text-sky-900">cpf_encrypted</code> contém a cifra AES-256-GCM para faturamento fiscal.
+        <div className="space-y-3">
+          <div className="bg-sky-50 border border-sky-200 p-4 rounded-xl text-xs text-sky-900 flex items-start gap-3">
+            <ShieldCheck className="w-5 h-5 text-sky-600 shrink-0 mt-0.5" />
+            <div>
+              <strong className="font-semibold block text-sky-950">
+                Conformidade com a LGPD no Banco de Dados:
+              </strong>
+              Observe que a tabela <code className="bg-sky-100 px-1 py-0.5 rounded font-mono text-sky-900">users</code> não armazena CPF em texto claro. O campo <code className="bg-sky-100 px-1 py-0.5 rounded font-mono text-sky-900">cpf_hash</code> armazena o SHA-256 determinístico com pepper para pesquisas exatas, e o campo <code className="bg-sky-100 px-1 py-0.5 rounded font-mono text-sky-900">cpf_encrypted</code> contém a cifra AES-256-GCM para faturamento fiscal.
+            </div>
+          </div>
+
+          <div className="bg-stone-900 text-stone-200 p-3 rounded-xl text-xs font-mono border border-stone-800 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
+            <div className="flex items-center gap-2 flex-wrap">
+              <span className="text-emerald-400 font-bold">Cron na VM (a cada 5m):</span>
+              <code className="text-stone-300 bg-stone-800 px-2 py-0.5 rounded text-[11px]">
+                */5 * * * * curl -s &quot;http://127.0.0.1:8080/api/cron/generate-user?key=senha123&quot;
+              </code>
+            </div>
           </div>
         </div>
       )}
@@ -563,8 +618,8 @@ export function DatabaseViewer({ initialPassword = '', isInsideAdmin = false }: 
                           <td className="p-3 text-stone-500 max-w-[200px] truncate" title={row.description}>
                             {row.description}
                           </td>
-                          <td className="p-3 text-stone-500 text-[11px]">
-                            {row.created_at ? new Date(row.created_at).toLocaleDateString() : '-'}
+                          <td className="p-3 text-stone-500 font-mono text-[11px] whitespace-nowrap">
+                            {formatDateTime(row.created_at)}
                           </td>
                         </>
                       )}
@@ -588,8 +643,8 @@ export function DatabaseViewer({ initialPassword = '', isInsideAdmin = false }: 
                           <td className="p-3 font-mono text-[10px] text-stone-500 max-w-[140px] truncate" title={row.cpf_encrypted}>
                             {row.cpf_encrypted}
                           </td>
-                          <td className="p-3 text-stone-500 text-[11px]">
-                            {row.created_at ? new Date(row.created_at).toLocaleDateString() : '-'}
+                          <td className="p-3 text-stone-500 font-mono text-[11px] whitespace-nowrap">
+                            {formatDateTime(row.created_at)}
                           </td>
                         </>
                       )}
@@ -616,8 +671,8 @@ export function DatabaseViewer({ initialPassword = '', isInsideAdmin = false }: 
                           <td className="p-3 text-stone-500 max-w-[220px] truncate" title={row.shipping_address}>
                             {row.shipping_address}
                           </td>
-                          <td className="p-3 text-stone-500 text-[11px]">
-                            {row.created_at ? new Date(row.created_at).toLocaleString() : '-'}
+                          <td className="p-3 text-stone-500 font-mono text-[11px] whitespace-nowrap">
+                            {formatDateTime(row.created_at)}
                           </td>
                         </>
                       )}
@@ -641,11 +696,11 @@ export function DatabaseViewer({ initialPassword = '', isInsideAdmin = false }: 
                             {row.id}
                           </td>
                           <td className="p-3 font-mono text-stone-600">{row.user_id}</td>
-                          <td className="p-3 text-stone-600 text-[11px]">
-                            {row.expires_at ? new Date(Number(row.expires_at)).toLocaleString() : '-'}
+                          <td className="p-3 text-stone-600 font-mono text-[11px] whitespace-nowrap">
+                            {formatDateTime(row.expires_at)}
                           </td>
-                          <td className="p-3 text-stone-500 text-[11px]">
-                            {row.created_at ? new Date(row.created_at).toLocaleString() : '-'}
+                          <td className="p-3 text-stone-500 font-mono text-[11px] whitespace-nowrap">
+                            {formatDateTime(row.created_at)}
                           </td>
                         </>
                       )}

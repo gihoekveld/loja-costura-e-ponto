@@ -43,6 +43,17 @@ interface DatabaseData {
   };
 }
 
+function formatDateTime(val: any): string {
+  if (!val) return '-';
+  const d = new Date(typeof val === 'string' && /^\d+$/.test(val) ? Number(val) : val);
+  if (isNaN(d.getTime())) return String(val);
+  return `${d.toLocaleDateString('pt-BR')} às ${d.toLocaleTimeString('pt-BR', {
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+  })}`;
+}
+
 function ProfessorInspectorContent() {
   const searchParams = useSearchParams();
   const [password, setPassword] = useState('');
@@ -446,6 +457,7 @@ function ProfessorInspectorContent() {
                     <th className="p-3 font-semibold text-stone-700">Cidade / UF</th>
                     <th className="p-3 font-semibold text-sky-800">CPF Hash (SHA-256)</th>
                     <th className="p-3 font-semibold text-sky-800">CPF Encrypted (AES-GCM)</th>
+                    <th className="p-3 font-semibold text-stone-700">Criado em</th>
                   </tr>
                 )}
                 {activeTab === 'orders' && (
@@ -506,8 +518,8 @@ function ProfessorInspectorContent() {
                               {row.stock} un
                             </span>
                           </td>
-                          <td className="p-3 text-stone-500">
-                            {row.created_at ? new Date(row.created_at).toLocaleDateString() : '-'}
+                          <td className="p-3 text-stone-500 font-mono text-[11px] whitespace-nowrap">
+                            {formatDateTime(row.created_at)}
                           </td>
                         </>
                       )}
@@ -530,6 +542,9 @@ function ProfessorInspectorContent() {
                           </td>
                           <td className="p-3 font-mono text-[10px] text-stone-500 max-w-[140px] truncate" title={row.cpf_encrypted}>
                             {row.cpf_encrypted}
+                          </td>
+                          <td className="p-3 text-stone-500 font-mono text-[11px] whitespace-nowrap">
+                            {formatDateTime(row.created_at)}
                           </td>
                         </>
                       )}
@@ -556,8 +571,8 @@ function ProfessorInspectorContent() {
                           <td className="p-3 text-stone-500 max-w-[220px] truncate" title={row.shipping_address}>
                             {row.shipping_address}
                           </td>
-                          <td className="p-3 text-stone-500">
-                            {row.created_at ? new Date(row.created_at).toLocaleString() : '-'}
+                          <td className="p-3 text-stone-500 font-mono text-[11px] whitespace-nowrap">
+                            {formatDateTime(row.created_at)}
                           </td>
                         </>
                       )}
@@ -580,11 +595,11 @@ function ProfessorInspectorContent() {
                             {row.id}
                           </td>
                           <td className="p-3 font-mono text-stone-600">{row.user_id}</td>
-                          <td className="p-3 text-stone-600">
-                            {row.expires_at ? new Date(Number(row.expires_at)).toLocaleString() : '-'}
+                          <td className="p-3 text-stone-600 font-mono text-[11px] whitespace-nowrap">
+                            {formatDateTime(row.expires_at)}
                           </td>
-                          <td className="p-3 text-stone-500">
-                            {row.created_at ? new Date(row.created_at).toLocaleString() : '-'}
+                          <td className="p-3 text-stone-500 font-mono text-[11px] whitespace-nowrap">
+                            {formatDateTime(row.created_at)}
                           </td>
                         </>
                       )}
