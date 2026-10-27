@@ -4,8 +4,10 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "dev:8080": "next dev -H 0.0.0.0 -p 8080",
     "build": "next build",
     "start": "next start",
+    "start:8080": "next start -H 0.0.0.0 -p 8080",
     "lint": "next lint",
     "pages:build": "npx @cloudflare/next-on-pages",
     "preview": "npm run pages:build && wrangler pages dev .vercel/output/static",
