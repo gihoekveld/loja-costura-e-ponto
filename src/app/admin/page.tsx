@@ -27,9 +27,11 @@ import {
   AlertTriangle,
   RefreshCw,
   LogOut,
-  ExternalLink
+  ExternalLink,
+  Database
 } from 'lucide-react';
 import { Product } from '@/types';
+import { DatabaseViewer } from '@/components/admin/DatabaseViewer';
 
 interface Customer {
   id: string;
@@ -86,7 +88,7 @@ interface NfeData {
 export default function AdminPage() {
   const [currentUser, setCurrentUser] = useState<any>(null);
   const [authLoading, setAuthLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState<'overview' | 'products' | 'customers' | 'orders'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'products' | 'customers' | 'orders' | 'database'>('overview');
 
   // Dados
   const [products, setProducts] = useState<Product[]>([]);
@@ -447,6 +449,14 @@ export default function AdminPage() {
             <span>Atualizar</span>
           </button>
           <Link
+            href="/admin/banco"
+            className="px-3.5 py-2 rounded-xl bg-amber-50 hover:bg-amber-100 border border-amber-200 text-xs font-semibold text-amber-900 flex items-center gap-1.5 transition-colors shadow-xs"
+            title="Abrir visualizador do banco em tela cheia"
+          >
+            <Database className="w-3.5 h-3.5 text-amber-700" />
+            <span>Página do Banco</span>
+          </Link>
+          <Link
             href="/"
             className="px-4 py-2 rounded-xl bg-white hover:bg-stone-50 border border-stone-300 text-xs font-semibold text-stone-700 flex items-center gap-1.5 transition-colors shadow-xs"
           >
@@ -510,6 +520,18 @@ export default function AdminPage() {
         >
           <Users className="w-4 h-4" />
           <span>Clientes & Duplo CPF ({customers.length})</span>
+        </button>
+
+        <button
+          onClick={() => setActiveTab('database')}
+          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 shrink-0 ${
+            activeTab === 'database'
+              ? 'bg-[#b85042] text-white shadow-xs'
+              : 'bg-white hover:bg-stone-100 text-stone-600 border border-stone-200'
+          }`}
+        >
+          <Database className="w-4 h-4" />
+          <span>Visualizar Banco de Dados (PostgreSQL)</span>
         </button>
       </div>
 
@@ -1094,6 +1116,15 @@ export default function AdminPage() {
               </table>
             </div>
           </div>
+        </div>
+      )}
+
+      {/* ------------------------------------------------------------- */}
+      {/* TAB 5: VISUALIZAR BANCO DE DADOS (POSTGRESQL COMPLETO) */}
+      {/* ------------------------------------------------------------- */}
+      {activeTab === 'database' && (
+        <div className="pt-2">
+          <DatabaseViewer isInsideAdmin={true} />
         </div>
       )}
 

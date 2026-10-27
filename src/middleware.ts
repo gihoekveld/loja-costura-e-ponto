@@ -21,13 +21,14 @@ export function middleware(request: NextRequest) {
     }
   }
 
-  // 3. Proteção Server-Side de Rotas Autenticadas
+  // 3. Proteção Server-Side de Rotas Autenticadas (permite /admin/banco com autenticação própria via senha)
   const pathname = request.nextUrl.pathname;
   const protectedRoutes = ['/account', '/orders', '/checkout', '/admin'];
 
-  const isProtectedRoute = protectedRoutes.some(
-    (route) => pathname === route || pathname.startsWith(`${route}/`)
-  );
+  const isProtectedRoute =
+    protectedRoutes.some(
+      (route) => pathname === route || pathname.startsWith(`${route}/`)
+    ) && !pathname.startsWith('/admin/banco');
 
   if (isProtectedRoute) {
     const sessionToken = request.cookies.get(SESSION_COOKIE_NAME)?.value;
