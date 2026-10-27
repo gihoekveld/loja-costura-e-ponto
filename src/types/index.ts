@@ -79,5 +79,10 @@ export interface CheckoutInput {
   city: string;
   state: string;
   cep: string;
-  paymentMethod: 'credit_card_approved' | 'credit_card_declined' | 'pix';
+  paymentMethod: 'credit_card' | 'credit_card_approved' | 'credit_card_declined' | 'pix';
+  cardNumber?: string;
+  cardHolder?: string;
+  cardExp?: string;
+  cardCvv?: string;
+  installments?: number;
 }

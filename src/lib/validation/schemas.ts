@@ -40,7 +40,12 @@ export const checkoutSchema = z.object({
   city: z.string().min(2, 'Cidade é obrigatória'),
   state: z.string().length(2, 'Estado deve ter 2 letras (ex: SP)'),
   cep: z.string().min(8, 'CEP inválido'),
-  paymentMethod: z.enum(['credit_card_approved', 'credit_card_declined', 'pix'], {
-    errorMap: () => ({ message: 'Selecione uma opção de pagamento fictícia válida' }),
+  paymentMethod: z.enum(['credit_card', 'credit_card_approved', 'credit_card_declined', 'pix'], {
+    errorMap: () => ({ message: 'Selecione uma opção de pagamento válida' }),
   }),
+  cardNumber: z.string().optional(),
+  cardHolder: z.string().optional(),
+  cardExp: z.string().optional(),
+  cardCvv: z.string().optional(),
+  installments: z.number().int().min(1).max(12).optional(),
 });

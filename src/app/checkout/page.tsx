@@ -28,7 +28,12 @@ export default function CheckoutPage() {
     city: '',
     state: 'SP',
     cep: '',
-    paymentMethod: 'pix',
+    paymentMethod: 'credit_card_approved',
+    cardNumber: '4000 0000 0000 0010',
+    cardHolder: '',
+    cardExp: '12/28',
+    cardCvv: '123',
+    installments: 1,
   });
 
   const [loading, setLoading] = useState(false);
@@ -45,6 +50,7 @@ export default function CheckoutPage() {
             setFormData((prev) => ({
               ...prev,
               name: data.user.name || prev.name,
+              cardHolder: prev.cardHolder || data.user.name?.toUpperCase() || 'MARIANA SILVA',
               address: data.user.street || prev.address,
               number: data.user.number || prev.number,
               city: data.user.city || prev.city,
@@ -296,10 +302,116 @@ export default function CheckoutPage() {
                     <span className="text-[10px] text-stone-500 font-medium">Até 6x sem juros</span>
                   </div>
                   <span className="text-stone-500 text-[11px] block mt-0.5">
-                    Transação segura processada com criptografia de ponta a ponta.
+                    Transação simulada com cartão de teste e aprovação instantânea.
                   </span>
                 </div>
               </label>
+
+              {/* Formulário Interativo do Cartão de Crédito */}
+              {(formData.paymentMethod === 'credit_card_approved' || formData.paymentMethod === 'credit_card') && (
+                <div className="p-4 rounded-xl border border-[#b85042]/30 bg-stone-50/80 space-y-3.5 mt-2 animate-in fade-in-50 duration-200">
+                  <div className="flex items-center justify-between pb-2 border-b border-stone-200">
+                    <div className="flex items-center gap-1.5 text-xs font-bold text-stone-900">
+                      <CreditCard className="w-4 h-4 text-[#b85042]" />
+                      <span>Dados do Cartão de Teste</span>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setFormData((prev) => ({
+                          ...prev,
+                          cardNumber: '4000 0000 0000 0010',
+                          cardHolder: prev.name ? prev.name.toUpperCase() : 'MARIANA SILVA',
+                          cardExp: '12/28',
+                          cardCvv: '123',
+                        }));
+                      }}
+                      className="text-[10px] px-2.5 py-1 bg-[#b85042]/10 hover:bg-[#b85042]/20 text-[#b85042] font-semibold rounded-lg transition-colors cursor-pointer"
+                    >
+                      Preencher Cartão de Sucesso
+                    </button>
+                  </div>
+
+                  <div>
+                    <label className="block text-stone-700 mb-1 font-medium text-[11px]">Número do Cartão (16 dígitos)</label>
+                    <input
+                      type="text"
+                      required
+                      maxLength={19}
+                      value={formData.cardNumber}
+                      onChange={(e) => {
+                        const v = e.target.value.replace(/\D/g, '').slice(0, 16);
+                        const parts = v.match(/.{1,4}/g);
+                        setFormData({ ...formData, cardNumber: parts ? parts.join(' ') : '' });
+                      }}
+                      placeholder="4000 0000 0000 0010"
+                      className="w-full px-3.5 py-2.5 bg-white border border-stone-300 rounded-xl text-stone-900 font-mono tracking-wider focus:outline-none focus:border-[#b85042] text-xs transition-colors"
+                    />
+                    <div className="mt-1 flex items-center justify-between text-[10px] text-stone-500">
+                      <span>Padrão 16 dígitos: <strong className="font-mono text-stone-700">4000 0000 0000 0010</strong></span>
+                      <span className="text-emerald-700 font-medium">✓ Teste de Sucesso Garantido</span>
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-stone-700 mb-1 font-medium text-[11px]">Nome Impresso no Cartão</label>
+                    <input
+                      type="text"
+                      required
+                      value={formData.cardHolder}
+                      onChange={(e) => setFormData({ ...formData, cardHolder: e.target.value.toUpperCase() })}
+                      placeholder="MARIANA SILVA"
+                      className="w-full px-3.5 py-2.5 bg-white border border-stone-300 rounded-xl text-stone-900 uppercase focus:outline-none focus:border-[#b85042] text-xs transition-colors font-medium"
+                    />
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <label className="block text-stone-700 mb-1 font-medium text-[11px]">Validade (MM/AA)</label>
+                      <input
+                        type="text"
+                        required
+                        maxLength={5}
+                        value={formData.cardExp}
+                        onChange={(e) => {
+                          let v = e.target.value.replace(/\D/g, '').slice(0, 4);
+                          if (v.length > 2) v = `${v.slice(0, 2)}/${v.slice(2)}`;
+                          setFormData({ ...formData, cardExp: v });
+                        }}
+                        placeholder="12/28"
+                        className="w-full px-3.5 py-2.5 bg-white border border-stone-300 rounded-xl text-stone-900 font-mono focus:outline-none focus:border-[#b85042] text-xs transition-colors text-center"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-stone-700 mb-1 font-medium text-[11px]">Código CVV</label>
+                      <input
+                        type="text"
+                        required
+                        maxLength={4}
+                        value={formData.cardCvv}
+                        onChange={(e) => setFormData({ ...formData, cardCvv: e.target.value.replace(/\D/g, '').slice(0, 4) })}
+                        placeholder="123"
+                        className="w-full px-3.5 py-2.5 bg-white border border-stone-300 rounded-xl text-stone-900 font-mono focus:outline-none focus:border-[#b85042] text-xs transition-colors text-center"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-stone-700 mb-1 font-medium text-[11px]">Opções de Parcelamento</label>
+                    <select
+                      value={formData.installments}
+                      onChange={(e) => setFormData({ ...formData, installments: Number(e.target.value) })}
+                      className="w-full px-3.5 py-2.5 bg-white border border-stone-300 rounded-xl text-stone-900 focus:outline-none focus:border-[#b85042] text-xs transition-colors"
+                    >
+                      <option value={1}>1x de R$ {total.toFixed(2).replace('.', ',')} sem juros</option>
+                      <option value={2}>2x de R$ {(total / 2).toFixed(2).replace('.', ',')} sem juros</option>
+                      <option value={3}>3x de R$ {(total / 3).toFixed(2).replace('.', ',')} sem juros</option>
+                      <option value={6}>6x de R$ {(total / 6).toFixed(2).replace('.', ',')} sem juros</option>
+                    </select>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>

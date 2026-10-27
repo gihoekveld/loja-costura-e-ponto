@@ -40,14 +40,24 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { items, name, cpf, address, number, city, state, cep, paymentMethod } = result.data;
+    const { items, name, cpf, address, number, city, state, cep, paymentMethod, cardNumber } = result.data;
+
+    const isCard = paymentMethod === 'credit_card' || paymentMethod === 'credit_card_approved';
+    const cleanCard = cardNumber ? cardNumber.replace(/\D/g, '') : '';
+
+    if (isCard && cleanCard.length > 0 && cleanCard.length !== 16) {
+      return NextResponse.json(
+        { error: 'O número do cartão de crédito deve conter 16 dígitos (ex: 4000 0000 0000 0010).' },
+        { status: 400 }
+      );
+    }
 
     // 4. SEGURANÇA CRÍTICA: Re-validação total de preços e estoque no SERVIDOR
     let serverCalculatedTotal = 0;
     const validatedOrderItems: { productId: string; quantity: number; unitPrice: number }[] = [];
 
     for (const item of items) {
-      // Consultar produto no D1 para obter o preço real
+      // Consultar produto no PostgreSQL para obter o preço real
       const product = await getProductById(item.productId);
 
       if (!product) {
@@ -79,15 +89,15 @@ export async function POST(request: NextRequest) {
       `${address}, ${number} - ${city}/${state} - CEP ${cep} (Destinatário: ${name}, CPF: ${cpf})`
     );
 
-    // 5. Simulação de Pagamento Fictício
-    if (paymentMethod === 'credit_card_declined') {
+    // 5. Simulação de Pagamento Fictício (Recusado para testes de falha)
+    if (paymentMethod === 'credit_card_declined' || (isCard && cleanCard.endsWith('0002'))) {
       // Registrar pedido cancelado sem dar baixa no estoque
       const failedOrder = await createOrder(
         user.id,
         validatedOrderItems,
         serverCalculatedTotal,
         formattedAddress,
-        'cartao_credito_recusado',
+        'cartao_recusado',
         'cancelled'
       );
 
@@ -101,20 +111,22 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // 6. Atualizar estoque no D1 para cada item
+    // 6. Atualizar estoque no PostgreSQL para cada item
     for (const item of validatedOrderItems) {
       await updateProductStock(item.productId, item.quantity);
     }
 
     const orderStatus = paymentMethod === 'pix' ? 'pending' : 'paid';
+    const last4 = cleanCard ? cleanCard.slice(-4) : '0010';
+    const recordedPaymentMethod = isCard ? 'cartao_credito' : paymentMethod;
 
-    // 7. Criar Pedido no D1
+    // 7. Criar Pedido no PostgreSQL
     const order = await createOrder(
       user.id,
       validatedOrderItems,
       serverCalculatedTotal,
       formattedAddress,
-      paymentMethod,
+      recordedPaymentMethod,
       orderStatus
     );
 
@@ -122,7 +134,7 @@ export async function POST(request: NextRequest) {
       success: true,
       message: paymentMethod === 'pix' 
         ? 'Pedido registrado via Pix Fictício! Aguardando confirmação.' 
-        : 'Pagamento fictício aprovado e pedido concluído com sucesso!',
+        : `Pagamento aprovado com sucesso no cartão de teste (final ${last4})! Pedido concluído.`,
       order,
     });
   } catch (error) {

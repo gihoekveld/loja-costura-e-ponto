@@ -60,4 +60,25 @@ describe('Validação de Schemas Zod & Sanitização XSS', () => {
     const escaped = escapeHtml(unsafeHtml);
     expect(escaped).toBe('&lt;script&gt;alert(&quot;XSS&quot;)&lt;/script&gt;');
   });
+
+  it('deve validar dados de checkout com cartão de crédito de teste de 16 dígitos', () => {
+    const validCheckout = {
+      items: [{ productId: 'prod_01', quantity: 2 }],
+      name: 'Mariana Silva',
+      cpf: '234.567.890-12',
+      address: 'Rua das Flores',
+      number: '250',
+      city: 'São Paulo',
+      state: 'SP',
+      cep: '04012-000',
+      paymentMethod: 'credit_card_approved',
+      cardNumber: '4000 0000 0000 0010',
+      cardHolder: 'MARIANA SILVA',
+      cardExp: '12/28',
+      cardCvv: '123',
+      installments: 3,
+    };
+    const result = checkoutSchema.safeParse(validCheckout);
+    expect(result.success).toBe(true);
+  });
 });
