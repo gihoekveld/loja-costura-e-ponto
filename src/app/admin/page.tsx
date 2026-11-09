@@ -2,25 +2,25 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { 
-  Users, 
-  Package, 
-  ShoppingBag, 
-  BarChart3, 
-  Search, 
-  Plus, 
-  Edit3, 
-  Trash2, 
-  Lock, 
-  Unlock, 
-  FileText, 
-  ShieldCheck, 
-  Key, 
-  CheckCircle2, 
-  AlertCircle, 
-  Copy, 
-  Printer, 
-  X, 
+import {
+  Users,
+  Package,
+  ShoppingBag,
+  BarChart3,
+  Search,
+  Plus,
+  Edit3,
+  Trash2,
+  Lock,
+  Unlock,
+  FileText,
+  ShieldCheck,
+  Key,
+  CheckCircle2,
+  AlertCircle,
+  Copy,
+  Printer,
+  X,
   ArrowLeft,
   DollarSign,
   TrendingUp,
@@ -466,11 +466,10 @@ export default function AdminPage() {
       <div className="flex items-center gap-2 border-b border-stone-200 overflow-x-auto pb-2">
         <button
           onClick={() => setActiveTab('overview')}
-          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 shrink-0 ${
-            activeTab === 'overview'
+          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 shrink-0 ${activeTab === 'overview'
               ? 'bg-[#b85042] text-white shadow-xs'
               : 'bg-white hover:bg-stone-100 text-stone-600 border border-stone-200'
-          }`}
+            }`}
         >
           <BarChart3 className="w-4 h-4" />
           <span>Visão Geral</span>
@@ -478,11 +477,10 @@ export default function AdminPage() {
 
         <button
           onClick={() => setActiveTab('products')}
-          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 shrink-0 ${
-            activeTab === 'products'
+          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 shrink-0 ${activeTab === 'products'
               ? 'bg-[#b85042] text-white shadow-xs'
               : 'bg-white hover:bg-stone-100 text-stone-600 border border-stone-200'
-          }`}
+            }`}
         >
           <Package className="w-4 h-4" />
           <span>Gerenciar Produtos ({products.length})</span>
@@ -490,11 +488,10 @@ export default function AdminPage() {
 
         <button
           onClick={() => setActiveTab('orders')}
-          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 shrink-0 ${
-            activeTab === 'orders'
+          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 shrink-0 ${activeTab === 'orders'
               ? 'bg-[#b85042] text-white shadow-xs'
               : 'bg-white hover:bg-stone-100 text-stone-600 border border-stone-200'
-          }`}
+            }`}
         >
           <ShoppingBag className="w-4 h-4" />
           <span>Gerenciar Pedidos ({orders.length})</span>
@@ -502,11 +499,10 @@ export default function AdminPage() {
 
         <button
           onClick={() => setActiveTab('customers')}
-          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 shrink-0 ${
-            activeTab === 'customers'
+          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 shrink-0 ${activeTab === 'customers'
               ? 'bg-[#b85042] text-white shadow-xs'
               : 'bg-white hover:bg-stone-100 text-stone-600 border border-stone-200'
-          }`}
+            }`}
         >
           <Users className="w-4 h-4" />
           <span>Clientes & Duplo CPF ({customers.length})</span>
@@ -715,13 +711,12 @@ export default function AdminPage() {
 
                     <td className="p-3.5 text-center">
                       <span
-                        className={`px-2 py-0.5 rounded text-[10px] font-bold font-mono ${
-                          p.stock > 20
+                        className={`px-2 py-0.5 rounded text-[10px] font-bold font-mono ${p.stock > 20
                             ? 'bg-emerald-50 text-[#437a5b] border border-emerald-200'
                             : p.stock > 0
-                            ? 'bg-amber-50 text-[#c67d26] border border-amber-200'
-                            : 'bg-rose-50 text-rose-700 border border-rose-200'
-                        }`}
+                              ? 'bg-amber-50 text-[#c67d26] border border-amber-200'
+                              : 'bg-rose-50 text-rose-700 border border-rose-200'
+                          }`}
                       >
                         {p.stock > 0 ? `${p.stock} un.` : 'Esgotado'}
                       </span>
@@ -807,13 +802,12 @@ export default function AdminPage() {
 
                     <td className="p-3.5 text-center">
                       <span
-                        className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider ${
-                          o.status === 'paid'
+                        className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider ${o.status === 'paid'
                             ? 'bg-emerald-50 text-[#437a5b] border border-emerald-200'
                             : o.status === 'pending'
-                            ? 'bg-amber-50 text-[#c67d26] border border-amber-200'
-                            : 'bg-rose-50 text-rose-700 border border-rose-200'
-                        }`}
+                              ? 'bg-amber-50 text-[#c67d26] border border-amber-200'
+                              : 'bg-rose-50 text-rose-700 border border-rose-200'
+                          }`}
                       >
                         {o.status === 'paid' ? 'Pago' : o.status === 'pending' ? 'Pendente' : 'Cancelado'}
                       </span>
@@ -1007,8 +1001,6 @@ export default function AdminPage() {
                   <tr>
                     <th className="p-3">Cliente / Contato</th>
                     <th className="p-3">Endereço de Entrega (CEP)</th>
-                    <th className="p-3">Hash Determinístico (Índice D1)</th>
-                    <th className="p-3">Cifra AES-256-GCM</th>
                     <th className="p-3 text-right">Ações Fiscais</th>
                   </tr>
                 </thead>
@@ -1053,40 +1045,6 @@ export default function AdminPage() {
                             </button>
                           )}
                         </div>
-                      </td>
-
-                      <td className="p-3 font-mono text-[11px]">
-                        {decryptedCpfMap[c.id] ? (
-                          <span className="px-2 py-1 rounded bg-emerald-50 text-[#437a5b] font-bold border border-emerald-200 flex items-center gap-1 w-fit">
-                            <Unlock className="w-3 h-3" /> {decryptedCpfMap[c.id]}
-                          </span>
-                        ) : (
-                          <div className="flex items-center gap-1.5">
-                            <span className="max-w-[130px] truncate text-stone-500" title={c.cpf_encrypted}>
-                              {c.cpf_encrypted ? c.cpf_encrypted.slice(0, 20) + '...' : 'Sem cifra'}
-                            </span>
-                            {c.cpf_encrypted && (
-                              <button
-                                onClick={() => handleDecrypt(c)}
-                                disabled={decryptingId === c.id}
-                                className="px-2 py-0.5 rounded bg-stone-100 hover:bg-stone-200 text-stone-700 text-[10px] font-sans font-semibold border border-stone-200 transition-colors"
-                                title="Descriptografar via AES-256-GCM"
-                              >
-                                {decryptingId === c.id ? 'Decript...' : 'Descriptografar'}
-                              </button>
-                            )}
-                          </div>
-                        )}
-                      </td>
-
-                      <td className="p-3 text-right">
-                        <button
-                          onClick={() => handleDecrypt(c, true)}
-                          className="px-3 py-1.5 rounded-lg bg-[#b85042] hover:bg-[#a33f32] text-white text-[11px] font-bold inline-flex items-center gap-1 shadow-xs transition-colors"
-                        >
-                          <FileText className="w-3.5 h-3.5" />
-                          <span>Gerar NF-e</span>
-                        </button>
                       </td>
                     </tr>
                   ))}

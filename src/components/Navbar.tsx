@@ -3,18 +3,18 @@
 import React, { useEffect, useState, useRef } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { 
-  ShoppingCart, 
-  User as UserIcon, 
+import {
+  ShoppingCart,
+  User as UserIcon,
   Heart,
-  Search, 
-  ChevronDown, 
-  Home, 
-  PhoneCall, 
-  ShieldCheck, 
-  LogOut, 
-  Package, 
-  Menu, 
+  Search,
+  ChevronDown,
+  Home,
+  PhoneCall,
+  ShieldCheck,
+  LogOut,
+  Package,
+  Menu,
   X,
   MessageCircle,
   Truck
@@ -319,11 +319,10 @@ export function Navbar() {
               {/* Início */}
               <Link
                 href="/"
-                className={`px-2.5 h-full flex items-center gap-1.5 transition-colors border-b-2 ${
-                  pathname === '/'
+                className={`px-2.5 h-full flex items-center gap-1.5 transition-colors border-b-2 ${pathname === '/'
                     ? 'text-[#a34839] border-[#a34839] font-bold'
                     : 'border-transparent hover:text-[#a34839]'
-                }`}
+                  }`}
               >
                 <Home className="w-3.5 h-3.5" />
                 <span>Início</span>
@@ -334,11 +333,10 @@ export function Navbar() {
                 <Link
                   href="/products"
                   onMouseEnter={() => setIsCatDropdownOpen(true)}
-                  className={`px-2.5 h-full flex items-center gap-1 transition-colors border-b-2 ${
-                    pathname.includes('/products')
+                  className={`px-2.5 h-full flex items-center gap-1 transition-colors border-b-2 ${pathname.includes('/products')
                       ? 'text-[#a34839] border-[#a34839] font-bold'
                       : 'border-transparent hover:text-[#a34839]'
-                  }`}
+                    }`}
                 >
                   <span>Produtos</span>
                   <ChevronDown className={`w-3 h-3 transition-transform ${isCatDropdownOpen ? 'rotate-180 text-[#a34839]' : 'text-stone-400'}`} />
@@ -382,17 +380,6 @@ export function Navbar() {
             {/* Botão Fale Conosco à Direita */}
             <div className="flex items-center gap-3 ml-auto">
               {/* Badge discreto do Painel Admin (quando logado) */}
-              {user && user.role === 'admin' && (
-                <Link
-                  href="/admin"
-                  className="hidden sm:flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold bg-amber-50 text-amber-800 border border-amber-200 hover:bg-amber-100 transition-colors"
-                  title="Painel Administrativo"
-                >
-                  <ShieldCheck className="w-3.5 h-3.5 text-amber-600" />
-                  <span>Painel Admin</span>
-                </Link>
-              )}
-
               <button
                 type="button"
                 onClick={() => setContactModalOpen(true)}
@@ -428,9 +415,8 @@ export function Navbar() {
               <Link
                 href="/"
                 onClick={() => setIsMobileMenuOpen(false)}
-                className={`flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-semibold ${
-                  pathname === '/' ? 'bg-[#a34839] text-white' : 'text-stone-800 hover:bg-stone-50'
-                }`}
+                className={`flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-semibold ${pathname === '/' ? 'bg-[#a34839] text-white' : 'text-stone-800 hover:bg-stone-50'
+                  }`}
               >
                 <Home className="w-4 h-4" /> Início
               </Link>
