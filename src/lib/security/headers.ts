@@ -10,8 +10,6 @@ export const SECURITY_HEADERS = {
   'Referrer-Policy': 'strict-origin-when-cross-origin',
   // Bloqueio de acesso a recursos de hardware sensíveis do navegador
   'Permissions-Policy': 'camera=(), microphone=(), geolocation=(), payment=()',
-  // Força HTTPS em produção
-  'Strict-Transport-Security': 'max-age=31536000; includeSubDomains',
 };
 
 export function applySecurityHeaders(headers: Headers): Headers {

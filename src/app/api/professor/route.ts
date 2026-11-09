@@ -1,29 +1,48 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
+import { getSessionUser } from '@/lib/auth/session';
 
 export const dynamic = 'force-dynamic';
 
-function isAuthorized(request: NextRequest, bodyPassword?: string): boolean {
-  const expectedPassword = process.env.PROFESSOR_PASSWORD || 'senha123';
+function cleanPassword(val?: string | null): string {
+  if (!val) return '';
+  return val.trim().replace(/^["']|["']$/g, '').trim();
+}
 
-  const url = new URL(request.url);
-  const fromQuery = url.searchParams.get('senha') || url.searchParams.get('password');
-  if (fromQuery && fromQuery.trim() === expectedPassword.trim()) {
+async function isAuthorized(request: NextRequest, bodyPassword?: string): Promise<boolean> {
+  try {
+    const user = await getSessionUser();
+    if (user && user.role === 'admin') {
+      return true;
+    }
+  } catch {
+    // Segue para validação por senha
+  }
+
+  const envPassword = cleanPassword(process.env.PROFESSOR_PASSWORD);
+  const validPasswords = new Set(['senha123']);
+  if (envPassword) validPasswords.add(envPassword);
+
+  const searchParams = request.nextUrl.searchParams;
+  const fromQuery = cleanPassword(searchParams.get('senha') || searchParams.get('password'));
+  if (fromQuery && validPasswords.has(fromQuery)) {
     return true;
   }
 
   const authHeader = request.headers.get('authorization');
   if (authHeader) {
-    const token = authHeader.startsWith('Bearer ') ? authHeader.slice(7).trim() : authHeader.trim();
-    if (token === expectedPassword.trim()) return true;
+    const rawToken = authHeader.startsWith('Bearer ') ? authHeader.slice(7) : authHeader;
+    const token = cleanPassword(rawToken);
+    if (token && validPasswords.has(token)) return true;
   }
 
-  const customHeader = request.headers.get('x-professor-password');
-  if (customHeader && customHeader.trim() === expectedPassword.trim()) {
+  const customHeader = cleanPassword(request.headers.get('x-professor-password'));
+  if (customHeader && validPasswords.has(customHeader)) {
     return true;
   }
 
-  if (bodyPassword && bodyPassword.trim() === expectedPassword.trim()) {
+  const cleanBodyPwd = cleanPassword(bodyPassword);
+  if (cleanBodyPwd && validPasswords.has(cleanBodyPwd)) {
     return true;
   }
 
@@ -85,7 +104,7 @@ async function fetchDatabaseData() {
 }
 
 export async function GET(request: NextRequest) {
-  if (!isAuthorized(request)) {
+  if (!(await isAuthorized(request))) {
     return NextResponse.json(
       {
         success: false,
@@ -120,7 +139,7 @@ export async function POST(request: NextRequest) {
     // Body vazio ou não-JSON
   }
 
-  if (!isAuthorized(request, bodyPassword)) {
+  if (!(await isAuthorized(request, bodyPassword))) {
     return NextResponse.json(
       {
         success: false,

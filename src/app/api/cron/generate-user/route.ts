@@ -85,24 +85,34 @@ const LOCATIONS = [
   { city: 'Osasco', state: 'SP', cep: '06010-000', street: 'Rua Antônio Agú', neighborhood: 'Centro' }
 ];
 
+function cleanPassword(val?: string | null): string {
+  if (!val) return '';
+  return val.trim().replace(/^["']|["']$/g, '').trim();
+}
+
 function isAuthorized(request: NextRequest): boolean {
-  const expectedKey = (process.env.CRON_SECRET || process.env.PROFESSOR_PASSWORD || 'senha123').trim();
+  const validKeys = new Set(['senha123']);
+  const cronSecret = cleanPassword(process.env.CRON_SECRET);
+  const profPwd = cleanPassword(process.env.PROFESSOR_PASSWORD);
+  if (cronSecret) validKeys.add(cronSecret);
+  if (profPwd) validKeys.add(profPwd);
 
-  const url = new URL(request.url);
-  const fromQuery = (url.searchParams.get('key') || url.searchParams.get('senha') || url.searchParams.get('token') || '').trim();
-  if (fromQuery && fromQuery === expectedKey) {
+  const searchParams = request.nextUrl.searchParams;
+  const fromQuery = cleanPassword(searchParams.get('key') || searchParams.get('senha') || searchParams.get('token'));
+  if (fromQuery && validKeys.has(fromQuery)) {
     return true;
   }
 
-  const headerKey = (request.headers.get('x-cron-key') || request.headers.get('x-professor-password') || '').trim();
-  if (headerKey && headerKey === expectedKey) {
+  const headerKey = cleanPassword(request.headers.get('x-cron-key') || request.headers.get('x-professor-password'));
+  if (headerKey && validKeys.has(headerKey)) {
     return true;
   }
 
-  const authHeader = (request.headers.get('authorization') || '').trim();
+  const authHeader = request.headers.get('authorization');
   if (authHeader) {
-    const token = authHeader.startsWith('Bearer ') ? authHeader.slice(7).trim() : authHeader;
-    if (token === expectedKey) return true;
+    const rawToken = authHeader.startsWith('Bearer ') ? authHeader.slice(7) : authHeader;
+    const token = cleanPassword(rawToken);
+    if (token && validKeys.has(token)) return true;
   }
 
   // Permite chamadas locais diretas se nenhuma chave for exigida estritamente

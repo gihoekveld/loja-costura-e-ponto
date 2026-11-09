@@ -20,11 +20,12 @@ export async function createSession(userId: string): Promise<string> {
     .bind(sessionId, userId, expiresAt)
     .run();
 
-  // Definir cookie HttpOnly seguro
+  // Definir cookie HttpOnly seguro (permite HTTP em VM local a menos que COOKIE_SECURE=true)
+  const isSecureCookie = process.env.COOKIE_SECURE === 'true';
   const cookieStore = cookies();
   cookieStore.set(SESSION_COOKIE_NAME, sessionId, {
     httpOnly: true, // Proteção contra roubo via XSS no cliente
-    secure: process.env.NODE_ENV === 'production', // Transmissão somente sobre HTTPS em prod
+    secure: isSecureCookie,
     sameSite: 'lax', // Proteção contra CSRF
     path: '/',
     maxAge: SESSION_TTL_SECONDS,
@@ -87,9 +88,10 @@ export async function destroySession(): Promise<void> {
       await db.prepare('DELETE FROM sessions WHERE id = ?').bind(sessionToken).run();
     }
 
+    const isSecureCookie = process.env.COOKIE_SECURE === 'true';
     cookieStore.set(SESSION_COOKIE_NAME, '', {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
+      secure: isSecureCookie,
       sameSite: 'lax',
       path: '/',
       maxAge: 0,

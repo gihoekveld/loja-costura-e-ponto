@@ -4,6 +4,11 @@ import { getSessionUser } from '@/lib/auth/session';
 
 export const dynamic = 'force-dynamic';
 
+function cleanPassword(val?: string | null): string {
+  if (!val) return '';
+  return val.trim().replace(/^["']|["']$/g, '').trim();
+}
+
 async function checkAccess(request: NextRequest): Promise<boolean> {
   // 1. Verifica se está logado como admin
   try {
@@ -16,21 +21,25 @@ async function checkAccess(request: NextRequest): Promise<boolean> {
   }
 
   // 2. Verifica senha de acesso configurada
-  const expectedPassword = (process.env.PROFESSOR_PASSWORD || 'senha123').trim();
-  const url = new URL(request.url);
-  const fromQuery = (url.searchParams.get('senha') || url.searchParams.get('password') || '').trim();
-  if (fromQuery && fromQuery === expectedPassword) {
+  const envPassword = cleanPassword(process.env.PROFESSOR_PASSWORD);
+  const validPasswords = new Set(['senha123']);
+  if (envPassword) validPasswords.add(envPassword);
+
+  const searchParams = request.nextUrl.searchParams;
+  const fromQuery = cleanPassword(searchParams.get('senha') || searchParams.get('password'));
+  if (fromQuery && validPasswords.has(fromQuery)) {
     return true;
   }
 
-  const authHeader = (request.headers.get('authorization') || '').trim();
+  const authHeader = request.headers.get('authorization');
   if (authHeader) {
-    const token = authHeader.startsWith('Bearer ') ? authHeader.slice(7).trim() : authHeader;
-    if (token === expectedPassword) return true;
+    const rawToken = authHeader.startsWith('Bearer ') ? authHeader.slice(7) : authHeader;
+    const token = cleanPassword(rawToken);
+    if (token && validPasswords.has(token)) return true;
   }
 
-  const customHeader = (request.headers.get('x-professor-password') || '').trim();
-  if (customHeader && customHeader === expectedPassword) {
+  const customHeader = cleanPassword(request.headers.get('x-professor-password'));
+  if (customHeader && validPasswords.has(customHeader)) {
     return true;
   }
 
