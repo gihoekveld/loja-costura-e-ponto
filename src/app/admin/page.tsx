@@ -467,8 +467,8 @@ export default function AdminPage() {
         <button
           onClick={() => setActiveTab('overview')}
           className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 shrink-0 ${activeTab === 'overview'
-              ? 'bg-[#b85042] text-white shadow-xs'
-              : 'bg-white hover:bg-stone-100 text-stone-600 border border-stone-200'
+            ? 'bg-[#b85042] text-white shadow-xs'
+            : 'bg-white hover:bg-stone-100 text-stone-600 border border-stone-200'
             }`}
         >
           <BarChart3 className="w-4 h-4" />
@@ -478,8 +478,8 @@ export default function AdminPage() {
         <button
           onClick={() => setActiveTab('products')}
           className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 shrink-0 ${activeTab === 'products'
-              ? 'bg-[#b85042] text-white shadow-xs'
-              : 'bg-white hover:bg-stone-100 text-stone-600 border border-stone-200'
+            ? 'bg-[#b85042] text-white shadow-xs'
+            : 'bg-white hover:bg-stone-100 text-stone-600 border border-stone-200'
             }`}
         >
           <Package className="w-4 h-4" />
@@ -489,8 +489,8 @@ export default function AdminPage() {
         <button
           onClick={() => setActiveTab('orders')}
           className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 shrink-0 ${activeTab === 'orders'
-              ? 'bg-[#b85042] text-white shadow-xs'
-              : 'bg-white hover:bg-stone-100 text-stone-600 border border-stone-200'
+            ? 'bg-[#b85042] text-white shadow-xs'
+            : 'bg-white hover:bg-stone-100 text-stone-600 border border-stone-200'
             }`}
         >
           <ShoppingBag className="w-4 h-4" />
@@ -500,8 +500,8 @@ export default function AdminPage() {
         <button
           onClick={() => setActiveTab('customers')}
           className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 shrink-0 ${activeTab === 'customers'
-              ? 'bg-[#b85042] text-white shadow-xs'
-              : 'bg-white hover:bg-stone-100 text-stone-600 border border-stone-200'
+            ? 'bg-[#b85042] text-white shadow-xs'
+            : 'bg-white hover:bg-stone-100 text-stone-600 border border-stone-200'
             }`}
         >
           <Users className="w-4 h-4" />
@@ -712,10 +712,10 @@ export default function AdminPage() {
                     <td className="p-3.5 text-center">
                       <span
                         className={`px-2 py-0.5 rounded text-[10px] font-bold font-mono ${p.stock > 20
-                            ? 'bg-emerald-50 text-[#437a5b] border border-emerald-200'
-                            : p.stock > 0
-                              ? 'bg-amber-50 text-[#c67d26] border border-amber-200'
-                              : 'bg-rose-50 text-rose-700 border border-rose-200'
+                          ? 'bg-emerald-50 text-[#437a5b] border border-emerald-200'
+                          : p.stock > 0
+                            ? 'bg-amber-50 text-[#c67d26] border border-amber-200'
+                            : 'bg-rose-50 text-rose-700 border border-rose-200'
                           }`}
                       >
                         {p.stock > 0 ? `${p.stock} un.` : 'Esgotado'}
@@ -803,10 +803,10 @@ export default function AdminPage() {
                     <td className="p-3.5 text-center">
                       <span
                         className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider ${o.status === 'paid'
-                            ? 'bg-emerald-50 text-[#437a5b] border border-emerald-200'
-                            : o.status === 'pending'
-                              ? 'bg-amber-50 text-[#c67d26] border border-amber-200'
-                              : 'bg-rose-50 text-rose-700 border border-rose-200'
+                          ? 'bg-emerald-50 text-[#437a5b] border border-emerald-200'
+                          : o.status === 'pending'
+                            ? 'bg-amber-50 text-[#c67d26] border border-amber-200'
+                            : 'bg-rose-50 text-rose-700 border border-rose-200'
                           }`}
                       >
                         {o.status === 'paid' ? 'Pago' : o.status === 'pending' ? 'Pendente' : 'Cancelado'}
@@ -1001,7 +1001,6 @@ export default function AdminPage() {
                   <tr>
                     <th className="p-3">Cliente / Contato</th>
                     <th className="p-3">Endereço de Entrega (CEP)</th>
-                    <th className="p-3 text-right">Ações Fiscais</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-stone-100">
